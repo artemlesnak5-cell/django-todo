@@ -1,37 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{ task.title }}</title>
+    <title>Удаление дела</title>
     <style>
-        body { font-family: Arial; margin: 40px; }
-        .container { max-width: 600px; margin: 0 auto; }
-        .status { display: inline-block; padding: 3px 10px; border-radius: 3px; }
-        .status-pending { background: #ffc107; }
-        .status-in_progress { background: #17a2b8; color: white; }
-        .status-completed { background: #28a745; color: white; }
-        .nav { background: #333; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
-        .nav a { color: white; margin: 0 15px; text-decoration: none; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; padding: 20px; }
+        .container { max-width: 500px; margin: 50px auto; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; }
+        h1 { color: #dc3545; margin-bottom: 15px; }
+        p { color: #555; margin-bottom: 20px; }
+        .buttons { display: flex; gap: 10px; justify-content: center; }
+        .btn { padding: 12px 30px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-danger:hover { background: #c82333; }
+        .btn-secondary { background: #6c757d; color: white; text-decoration: none; }
+        .btn-secondary:hover { background: #5a6268; }
+        .nav { background: white; padding: 15px 25px; border-radius: 10px; margin-bottom: 20px; }
+        .nav a { color: #667eea; text-decoration: none; }
+        .nav a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="nav">
-            <a href="/tasks/">Мои задачи</a>
-            <a href="/tasks/create/">Создать задачу</a>
-            <a href="/users/logout/">Выйти</a>
+            <a href="{% url 'tasks:list' %}">← Назад к списку</a>
         </div>
         
-        <h1>{{ task.title }}</h1>
-        <span class="status status-{{ task.status }}">{{ task.get_status_display }}</span>
-        <p><strong>Описание:</strong></p>
-        <p>{{ task.description }}</p>
-        <p><strong>Создано:</strong> {{ task.created_at|date:"d.m.Y H:i" }}</p>
-        <p><strong>Обновлено:</strong> {{ task.updated_at|date:"d.m.Y H:i" }}</p>
-        {% if task.due_date %}
-            <p><strong>Срок выполнения:</strong> {{ task.due_date|date:"d.m.Y H:i" }}</p>
-        {% endif %}
-        <br>
-        <a href="/tasks/">← Назад к списку</a>
+        <div class="card">
+            <h1>🗑️ Удалить дело?</h1>
+            <p>Вы уверены, что хотите удалить дело <strong>"{{ task.title }}"</strong>?</p>
+            <p style="font-size: 14px; color: #888;">Это действие нельзя отменить.</p>
+            
+            <div class="buttons">
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Да, удалить</button>
+                </form>
+                <a href="{% url 'tasks:list' %}" class="btn btn-secondary">Отмена</a>
+            </div>
+        </div>
     </div>
 </body>
 </html>

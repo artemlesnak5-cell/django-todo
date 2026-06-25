@@ -1,42 +1,123 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Мои задачи</title>
+    <title>Мои дела</title>
     <style>
-        body { font-family: Arial; margin: 40px; }
-        .container { max-width: 800px; margin: 0 auto; }
-        .task { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 5px; }
-        .task h3 { margin: 0; }
-        .status { display: inline-block; padding: 3px 10px; border-radius: 3px; font-size: 12px; }
-        .status-pending { background: #ffc107; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 15px; margin-bottom: 30px; }
+        .header h1 { font-size: 28px; }
+        .header p { opacity: 0.9; margin-top: 5px; }
+        
+        .nav { display: flex; gap: 15px; flex-wrap: wrap; margin: 20px 0; }
+        .nav a { background: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; color: #333; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: 0.3s; }
+        .nav a:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+        .nav .logout { background: #dc3545; color: white; }
+        .nav .logout:hover { background: #c82333; }
+        
+        .filters { display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .filters a { padding: 8px 15px; border-radius: 20px; text-decoration: none; color: #666; background: #f0f2f5; transition: 0.3s; }
+        .filters a.active { background: #667eea; color: white; }
+        .filters a:hover { background: #667eea; color: white; }
+        
+        .search-form { display: flex; gap: 10px; }
+        .search-form input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
+        .search-form button { padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; }
+        
+        .task-card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: 0.3s; border-left: 5px solid #667eea; }
+        .task-card:hover { transform: translateX(5px); box-shadow: 0 4px 15px rgba(0,0,0,0.12); }
+        .task-card h3 { margin-bottom: 5px; }
+        .task-card h3 a { color: #333; text-decoration: none; }
+        .task-card h3 a:hover { color: #667eea; }
+        .task-card .meta { color: #888; font-size: 14px; margin: 8px 0; }
+        .task-card .description { color: #555; margin: 10px 0; }
+        
+        .status { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .status-pending { background: #ffc107; color: #333; }
         .status-in_progress { background: #17a2b8; color: white; }
         .status-completed { background: #28a745; color: white; }
-        .nav { background: #333; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
-        .nav a { color: white; margin: 0 15px; text-decoration: none; }
-        .nav a:hover { text-decoration: underline; }
+        .status-cancelled { background: #dc3545; color: white; }
+        
+        .task-actions { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+        .task-actions a, .task-actions button { padding: 5px 15px; border-radius: 5px; text-decoration: none; font-size: 13px; border: none; cursor: pointer; transition: 0.3s; }
+        .btn-complete { background: #28a745; color: white; }
+        .btn-complete:hover { background: #218838; }
+        .btn-edit { background: #17a2b8; color: white; }
+        .btn-edit:hover { background: #138496; }
+        .btn-delete { background: #dc3545; color: white; }
+        .btn-delete:hover { background: #c82333; }
+        
+        .empty { text-align: center; padding: 60px 20px; background: white; border-radius: 12px; }
+        .empty h2 { color: #666; margin-bottom: 15px; }
+        .empty .btn { display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; }
+        .empty .btn:hover { background: #5a67d8; }
+        
+        .messages { padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .messages.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .messages.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="nav">
-            <a href="/tasks/">Мои задачи</a>
-            <a href="/tasks/create/">Создать задачу</a>
-            <a href="/users/logout/">Выйти</a>
+        <div class="header">
+            <h1>📋 Мои дела</h1>
+            <p>Добро пожаловать, {{ user.username }}!</p>
         </div>
         
-        <h1>Мои задачи</h1>
+        <div class="nav">
+            <a href="{% url 'tasks:create' %}">➕ Создать новое дело</a>
+            <a href="{% url 'tasks:list' %}">📋 Все дела</a>
+            <a href="{% url 'users:logout' %}" class="logout">🚪 Выйти</a>
+        </div>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="messages {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        
+        <div class="filters">
+            <a href="{% url 'tasks:list' %}" class="{% if not status_filter %}active{% endif %}">Все</a>
+            <a href="?status=pending" class="{% if status_filter == 'pending' %}active{% endif %}">⏳ В ожидании</a>
+            <a href="?status=in_progress" class="{% if status_filter == 'in_progress' %}active{% endif %}">🔄 В процессе</a>
+            <a href="?status=completed" class="{% if status_filter == 'completed' %}active{% endif %}">✅ Выполнено</a>
+            <a href="?status=cancelled" class="{% if status_filter == 'cancelled' %}active{% endif %}">❌ Отменено</a>
+            
+            <form method="get" class="search-form" style="margin-left: auto;">
+                <input type="text" name="search" placeholder="🔍 Поиск..." value="{{ search_query }}">
+                <button type="submit">Найти</button>
+            </form>
+        </div>
         
         {% for task in tasks %}
-            <div class="task">
-                <h3>{{ task.title }}</h3>
-                <p>{{ task.description|truncatechars:100 }}</p>
+            <div class="task-card">
+                <h3><a href="{% url 'tasks:detail' task.id %}">{{ task.title }}</a></h3>
                 <span class="status status-{{ task.status }}">{{ task.get_status_display }}</span>
-                <small>Создано: {{ task.created_at|date:"d.m.Y H:i" }}</small>
-                <br>
-                <a href="/tasks/{{ task.id }}/">Подробнее</a>
+                <div class="meta">
+                    📅 Создано: {{ task.created_at|date:"d.m.Y H:i" }}
+                    {% if task.due_date %}
+                        | ⏰ Срок: {{ task.due_date|date:"d.m.Y H:i" }}
+                    {% endif %}
+                </div>
+                {% if task.description %}
+                    <div class="description">{{ task.description|truncatechars:100 }}</div>
+                {% endif %}
+                <div class="task-actions">
+                    {% if task.status != 'completed' %}
+                        <a href="{% url 'tasks:complete' task.id %}" class="btn-complete">✅ Выполнено</a>
+                    {% endif %}
+                    <a href="{% url 'tasks:update' task.id %}" class="btn-edit">✏️ Редактировать</a>
+                    <a href="{% url 'tasks:delete' task.id %}" class="btn-delete">🗑️ Удалить</a>
+                </div>
             </div>
         {% empty %}
-            <p>У вас пока нет задач. <a href="/tasks/create/">Создать задачу</a></p>
+            <div class="empty">
+                <h2>😊 У вас пока нет дел</h2>
+                <p>Создайте своё первое дело!</p>
+                <a href="{% url 'tasks:create' %}" class="btn">➕ Создать дело</a>
+            </div>
         {% endfor %}
     </div>
 </body>
