@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Создать задачу</title>
+    <style>
+        body { font-family: Arial; margin: 40px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        input, textarea, select { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 5px; }
+        button { padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .nav { background: #333; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .nav a { color: white; margin: 0 15px; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <a href="/tasks/">Мои задачи</a>
+            <a href="/tasks/create/">Создать задачу</a>
+            <a href="/users/logout/">Выйти</a>
+        </div>
+        
+        <h1>{% if form.instance.id %}Редактировать{% else %}Создать{% endif %} задачу</h1>
+        
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Сохранить</button>
+        </form>
+    </div>
+</body>
+</html>

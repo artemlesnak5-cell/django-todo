@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ task.title }}</title>
+    <style>
+        body { font-family: Arial; margin: 40px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .status { display: inline-block; padding: 3px 10px; border-radius: 3px; }
+        .status-pending { background: #ffc107; }
+        .status-in_progress { background: #17a2b8; color: white; }
+        .status-completed { background: #28a745; color: white; }
+        .nav { background: #333; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .nav a { color: white; margin: 0 15px; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <a href="/tasks/">Мои задачи</a>
+            <a href="/tasks/create/">Создать задачу</a>
+            <a href="/users/logout/">Выйти</a>
+        </div>
+        
+        <h1>{{ task.title }}</h1>
+        <span class="status status-{{ task.status }}">{{ task.get_status_display }}</span>
+        <p><strong>Описание:</strong></p>
+        <p>{{ task.description }}</p>
+        <p><strong>Создано:</strong> {{ task.created_at|date:"d.m.Y H:i" }}</p>
+        <p><strong>Обновлено:</strong> {{ task.updated_at|date:"d.m.Y H:i" }}</p>
+        {% if task.due_date %}
+            <p><strong>Срок выполнения:</strong> {{ task.due_date|date:"d.m.Y H:i" }}</p>
+        {% endif %}
+        <br>
+        <a href="/tasks/">← Назад к списку</a>
+    </div>
+</body>
+</html>

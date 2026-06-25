@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Task
-from .forms import TaskForm
+from .forms import TaskForm  # ← должно быть
 
 @login_required
 def task_list(request):
@@ -16,12 +16,12 @@ def task_create(request):
             task = form.save(commit=False)
             task.user = request.user
             task.save()
-            return redirect('/tasks/')
+            return redirect('tasks:list')
     else:
         form = TaskForm()
     return render(request, 'tasks/task_form.html', {'form': form})
 
 @login_required
 def task_detail(request, pk):
-    task = Task.objects.get(pk=pk, user=request.user)
+    task = get_object_or_404(Task, pk=pk, user=request.user)
     return render(request, 'tasks/task_detail.html', {'task': task})

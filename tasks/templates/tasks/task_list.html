@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Мои задачи</title>
+    <style>
+        body { font-family: Arial; margin: 40px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .task { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .task h3 { margin: 0; }
+        .status { display: inline-block; padding: 3px 10px; border-radius: 3px; font-size: 12px; }
+        .status-pending { background: #ffc107; }
+        .status-in_progress { background: #17a2b8; color: white; }
+        .status-completed { background: #28a745; color: white; }
+        .nav { background: #333; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .nav a { color: white; margin: 0 15px; text-decoration: none; }
+        .nav a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <a href="/tasks/">Мои задачи</a>
+            <a href="/tasks/create/">Создать задачу</a>
+            <a href="/users/logout/">Выйти</a>
+        </div>
+        
+        <h1>Мои задачи</h1>
+        
+        {% for task in tasks %}
+            <div class="task">
+                <h3>{{ task.title }}</h3>
+                <p>{{ task.description|truncatechars:100 }}</p>
+                <span class="status status-{{ task.status }}">{{ task.get_status_display }}</span>
+                <small>Создано: {{ task.created_at|date:"d.m.Y H:i" }}</small>
+                <br>
+                <a href="/tasks/{{ task.id }}/">Подробнее</a>
+            </div>
+        {% empty %}
+            <p>У вас пока нет задач. <a href="/tasks/create/">Создать задачу</a></p>
+        {% endfor %}
+    </div>
+</body>
+</html>
